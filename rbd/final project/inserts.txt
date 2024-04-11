@@ -1,0 +1,86 @@
+-- Table: Course
+INSERT INTO Course (id, title, description) VALUES
+(1, 'Introduction to Programming', 'Learn the basics of programming.');
+
+INSERT INTO Course (id, title, description) VALUES
+(2, 'Research Methods', 'Explore various research methodologies.');
+
+INSERT INTO Course (id, title, description) VALUES
+(3, 'Web Development', 'Build interactive websites and web applications.');
+
+-- Table: Assignment
+INSERT INTO Assignment (id, title, description, deadline, Course_id) VALUES
+(1, 'Assignment 1', 'Complete the exercises in Chapter 1.', TO_DATE('2023-06-20', 'YYYY-MM-DD'), 1);
+
+INSERT INTO Assignment (id, title, description, deadline, Course_id) VALUES
+(2, 'Assignment 2', 'Write a research paper on a chosen topic.', TO_DATE('2023-06-25', 'YYYY-MM-DD'), 2);
+
+INSERT INTO Assignment (id, title, description, deadline, Course_id) VALUES
+(3, 'Assignment 3', 'Develop a web application using HTML and CSS.', TO_DATE('2023-06-30', 'YYYY-MM-DD'), 3);
+
+-- Table: Instructor
+INSERT INTO Instructor (id, name, department, Course_id) VALUES
+(1, 'John Smith', 'Computer Science', 1);
+
+INSERT INTO Instructor (id, name, department, Course_id) VALUES
+(2, 'Emily Johnson', 'Social Sciences', 2);
+
+INSERT INTO Instructor (id, name, department, Course_id) VALUES
+(3, 'Michael Williams', 'Information Technology', 3);
+
+-- Table: Lecture
+INSERT INTO Lecture (id, title, content, Course_id) VALUES
+(1, 'Introduction to Programming Concepts', 'Basic concepts and terminology in programming.', 1);
+
+INSERT INTO Lecture (id, title, content, Course_id) VALUES
+(2, 'Qualitative Research Methods', 'Methods for collecting and analyzing qualitative data.', 2);
+
+INSERT INTO Lecture (id, title, content, Course_id) VALUES
+(3, 'HTML and CSS Fundamentals', 'Building blocks of web development.', 3);
+
+-- Table: Quiz
+INSERT INTO Quiz (id, title, questions, Lecture_id) VALUES
+(1, 'Programming Quiz 1', '1. What is a variable? 2. Explain the difference between == and === in JavaScript.', 1);
+
+INSERT INTO Quiz (id, title, questions, Lecture_id) VALUES
+(2, 'Research Methods Quiz', '1. What is the difference between quantitative and qualitative research? 2. Describe the process of conducting interviews.', 2);
+
+INSERT INTO Quiz (id, title, questions, Lecture_id) VALUES
+(3, 'Web Development Quiz', '1. What are the main tags used in HTML? 2. How do you style elements using CSS?', 3);
+
+-- Table: Resource
+INSERT INTO "Resource" (id, title, url, Course_id) VALUES
+(1, 'Programming Reference Guide', 'https://example.com/programming-reference', 1);
+
+INSERT INTO "Resource" (id, title, url, Course_id) VALUES
+(2, 'Research Methods Library', 'https://example.com/research-methods-library', 2);
+
+INSERT INTO "Resource" (id, title, url, Course_id) VALUES
+(3, 'Web Development Tutorials', 'https://example.com/web-development-tutorials', 3);
+
+-- Table: User
+INSERT INTO "User" (id, username, password, email, first_name, last_name) VALUES
+(1, 'johndoe', 'password123', 'johndoe@example.com', 'John', 'Doe');
+
+INSERT INTO "User" (id, username, password, email, first_name, last_name) VALUES
+(2, 'janedoe', 'pass456', 'janedoe@example.com', 'Jane', 'Doe');
+
+INSERT INTO "User" (id, username, password, email, first_name, last_name) VALUES
+(3, 'mike', 'mike789', 'mike@example.com', 'Michael', 'Smith');
+
+
+-- Table: Enrollment
+INSERT INTO Enrollment (Course_id, User_id) VALUES
+(1, 1);
+
+INSERT INTO Enrollment (Course_id, User_id) VALUES
+(1, 2);
+
+INSERT INTO Enrollment (Course_id, User_id) VALUES
+(2, 3);
+
+INSERT INTO Enrollment (Course_id, User_id) VALUES
+(3, 1);
+
+INSERT INTO Enrollment (Course_id, User_id) VALUES
+(3, 3);

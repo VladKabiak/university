@@ -1,0 +1,59 @@
+Users:
+
+Attributes: id (PK), firstName, lastName, username, email, password, dateOfBirth, registrationDate, profilePictureUrl
+Connections: Friendships (Users_id1, Users_id2), GroupMembers (Users_id), Groups (Users_id), Messages (SenderID, ReceiverID), Notifications (Users_id), PostComments (Users_id), PostLikes (Users_id), Posts (Users_id)
+Friendships:
+
+Attributes: Statuses_id, Users_id1 (FK), Users_id2 (FK)
+Connections: Users (Users_id1), Users (Users_id2), Statuses (Statuses_id)
+Groups:
+
+Attributes: id (PK), GroupName, CreationDate, Description, Users_id (FK)
+Connections: GroupMembers (Groups_id), Users (Users_id), Messages (Groups_id)
+GroupMembers:
+
+Attributes: Groups_id (FK), Users_id (FK), JoinDate
+Connections: Groups (Groups_id), Users (Users_id)
+Messages:
+
+Attributes: id (PK), Text, IsRead, Timestamp, Groups_id (FK), SenderID (FK), ReceiverID (FK)
+Connections: Groups (Groups_id), Users (SenderID), Users (ReceiverID)
+NotificationTypes:
+
+Attributes: id (PK), NotificationType
+Notifications:
+
+Attributes: id (PK), isRead, notificationDate, Users_id (FK), NotificationTypes_id (FK)
+Connections: Users (Users_id), NotificationTypes (NotificationTypes_id)
+PostComments:
+
+Attributes: commentDate, commentText, Posts_id (FK), Users_id (FK)
+Connections: Posts (Posts_id), Users (Users_id)
+PostLikes:
+
+Attributes: Users_id (FK), Posts_id (FK)
+Connections: Users (Users_id), Posts (Posts_id)
+Posts:
+
+Attributes: id (PK), postDate, Content, Users_id (FK)
+Connections: Users (Users_id), PostComments (Posts_id), PostLikes (Posts_id)
+Statuses:
+
+Attributes: id (PK), StatusName
+Sample functionalities/questions the database can answer:
+
+Retrieve all friends of a given user:
+
+Query the Friendships table for a specific user (Users_id1 or Users_id2) to get their friends.
+List all groups a user is a member of:
+
+Query the GroupMembers table for a specific user (Users_id) to find the groups they belong to.
+Get all messages in a specific group:
+
+Query the Messages table for a specific group (Groups_id) to retrieve all messages related to that group.
+Find all notifications for a user:
+
+Query the Notifications table for a specific user (Users_id) to get their notifications.
+Retrieve posts liked by a user:
+
+Query the PostLikes table for a specific user (Users_id) to get the posts they have liked.

@@ -1,0 +1,74 @@
+CREATE OR REPLACE PROCEDURE send_notification(
+    p_user_id IN NUMBER,
+    p_subject IN VARCHAR2,
+    p_message IN VARCHAR2
+) AS
+BEGIN
+   DBMS_OUTPUT.PUT_LINE('Notification sent to user ' || p_user_id || ': ' || p_subject || ' - ' || p_message);
+END send_notification;
+
+SET SERVEROUTPUT ON;
+
+BEGIN
+    send_notification(1, 'Test Subject', 'This is a test message.');
+END;
+
+CREATE OR REPLACE PROCEDURE update_post_content_by_id(
+    p_post_id IN NUMBER,
+    p_new_content IN CLOB
+) AS
+    CURSOR postCursor IS
+        SELECT id, Content
+        FROM Posts
+        WHERE id = p_post_id;
+    
+    v_post_id NUMBER;
+    v_content CLOB;
+BEGIN
+    OPEN postCursor;
+
+    FETCH postCursor INTO v_post_id, v_content;
+
+    IF postCursor%FOUND THEN
+        UPDATE Posts
+        SET Content = p_new_content
+        WHERE id = p_post_id;
+
+        COMMIT;
+    END IF;
+
+    CLOSE postCursor;
+END update_post_content_by_id;
+
+BEGIN
+    update_post_content_by_id(1, 'Updated content for post 1');
+END;
+
+
+CREATE OR REPLACE TRIGGER check_password_length
+BEFORE INSERT ON Users
+FOR EACH ROW
+DECLARE
+    v_password_length NUMBER;
+BEGIN
+    v_password_length := LENGTH(:NEW.password);
+
+    IF v_password_length < 8 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Password must be 8 or more characters.');
+    END IF;
+END check_password_length;
+
+INSERT INTO Users (id, firstName, lastName, username, email, password, dateOfBirth, registrationDate, profilePictureUrl)
+VALUES (3, 'Test', 'User', 'test_user', 'test.user@email.com', 'pass', TO_DATE('1995-01-01', 'YYYY-MM-DD'), TO_DATE('2024-01-15', 'YYYY-MM-DD'), 'profile_pic3.jpg');
+
+CREATE OR REPLACE TRIGGER check_group_name
+BEFORE INSERT ON Groups
+FOR EACH ROW
+BEGIN
+    IF INSTR(UPPER(:NEW.GroupName), 'BOMBING') > 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Group name cannot contain the word "bombing".');
+    END IF;
+END check_group_name;
+
+INSERT INTO Groups (id, GroupName, CreationDate, Description, Users_id)
+VALUES (3, 'Bombing Israel', TO_DATE('2024-01-12', 'YYYY-MM-DD'), 'A group for discussing programming topics', 1);

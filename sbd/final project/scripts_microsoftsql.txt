@@ -1,0 +1,116 @@
+CREATE TRIGGER CheckYearOfBirth
+ON Users
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @InvalidRowCount INT;
+
+    SELECT @InvalidRowCount = COUNT(*)
+    FROM inserted
+    WHERE dateOfBirth < '1900-01-01';
+
+    IF @InvalidRowCount > 0
+    BEGIN
+        RAISERROR ('Year of birth cannot be less than 1900.', 16, 1);
+        ROLLBACK;
+    END
+    ELSE
+    BEGIN
+        PRINT 'All rows have valid year of birth. Trigger executed successfully.';
+    END
+END;
+
+INSERT INTO Users (id, firstName, lastName, username, email, password, dateOfBirth, registrationDate, profilePictureUrl)
+VALUES (999, 'Jane', 'Smith', 'jane_smith', 'jane.smith@email.com', 'securepass', '1800-05-22', '2024-01-12', 'profile_pic2.jpg');
+
+
+CREATE TRIGGER DeleteAssociatedPosts
+ON Users
+INSTEAD OF DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @UserId INT;
+
+    SELECT TOP 1 @UserId = id
+    FROM deleted;
+
+    DELETE FROM Posts
+    WHERE Users_id = @UserId;
+
+    DELETE FROM Users
+    WHERE id = @UserId;
+
+    PRINT 'Deleted user and associated posts successfully.';
+END;
+
+
+INSERT INTO Users (id, firstName, lastName, username, email, password, dateOfBirth, registrationDate, profilePictureUrl)
+VALUES (9999, 'John', 'Doe', 'john_doe', 'john.doe@email.com', 'password123', '1990-01-15', '2024-01-12', 'profile_pic1.jpg');
+
+INSERT INTO Posts (id, postDate, Content, Users_id)
+VALUES (9999, '2024-01-12', 'Excited about my new project!', 9999);
+
+DELETE FROM Users WHERE id = 9999;
+
+CREATE PROCEDURE GetFriendshipInfo
+    @UserID INT
+AS
+BEGIN
+    DECLARE @FirstName VARCHAR(255), @LastName VARCHAR(255), @StatusName VARCHAR(255);
+
+    SELECT @FirstName = firstName, @LastName = lastName
+    FROM Users
+    WHERE id = @UserID;
+
+    SELECT
+        f.Statuses_id,
+        @FirstName + ' ' + @LastName AS UserName1,
+        CONCAT(u2.firstName, ' ', u2.lastName) AS UserName2,
+        s.StatusName
+    FROM Friendships f
+    INNER JOIN Users u1 ON f.Users_id1 = u1.id
+    INNER JOIN Users u2 ON f.Users_id2 = u2.id
+    INNER JOIN Statuses s ON f.Statuses_id = s.id
+    WHERE f.Users_id1 = @UserID OR f.Users_id2 = @UserID;
+END;
+
+EXEC GetFriendshipInfo 1;
+
+CREATE PROCEDURE GetLatestPosts
+    @UserID INT
+AS
+BEGIN
+    DECLARE @PostID INT, @PostDate DATE, @PostContent NVARCHAR(MAX), @UserName NVARCHAR(255);
+
+    DECLARE postCursor CURSOR FOR
+    SELECT
+        p.id AS PostID,
+        p.postDate AS PostDate,
+        p.Content AS PostContent,
+        u.firstName + ' ' + u.lastName AS UserName
+    FROM Posts p
+    INNER JOIN Users u ON p.Users_id = u.id
+    WHERE p.Users_id = @UserID
+    ORDER BY p.postDate DESC;
+
+    OPEN postCursor;
+
+    FETCH NEXT FROM postCursor INTO @PostID, @PostDate, @PostContent, @UserName;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        PRINT 'PostID: ' + CAST(@PostID AS NVARCHAR(10)) + ', PostDate: ' + CAST(@PostDate AS NVARCHAR(10)) +
+              ', PostContent: ' + @PostContent + ', UserName: ' + @UserName;
+
+        FETCH NEXT FROM postCursor INTO @PostID, @PostDate, @PostContent, @UserName;
+    END;
+
+    CLOSE postCursor;
+    DEALLOCATE postCursor;
+END;
+
+EXEC GetLatestPosts 1;

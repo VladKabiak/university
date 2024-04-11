@@ -1,0 +1,294 @@
+-- tables
+-- Table: Friendships
+CREATE TABLE Friendships (
+    Statuses_id int  NOT NULL,
+    Users_id1 int  NOT NULL,
+    Users_id2 int  NOT NULL,
+    CONSTRAINT Friendships_pk PRIMARY KEY (Users_id1, Users_id2)
+);
+
+-- Table: GroupMembers
+CREATE TABLE GroupMembers (
+    Groups_id int  NOT NULL,
+    Users_id int  NOT NULL,
+    JoinDate date  NOT NULL,
+    CONSTRAINT GroupMembers_pk PRIMARY KEY (Users_id, Groups_id)
+);
+
+-- Table: Groups
+CREATE TABLE Groups (
+    id int  NOT NULL,
+    GroupName varchar(255)  NOT NULL,
+    CreationDate date  NOT NULL,
+    Description nvarchar(max)  NOT NULL,
+    Users_id int  NOT NULL,
+    CONSTRAINT Groups_pk PRIMARY KEY (id)
+);
+
+-- Table: Messages
+CREATE TABLE Messages (
+    id int  NOT NULL,
+    Text nvarchar(max)  NOT NULL,
+    IsRead smallint  NOT NULL,
+    Timestamp datetime  NOT NULL,
+    Groups_id int  NULL,
+    SenderID int  NOT NULL,
+    ReceiverID int  NOT NULL,
+    CONSTRAINT Messages_pk PRIMARY KEY (id)
+);
+
+-- Table: NotificationTypes
+CREATE TABLE NotificationTypes (
+    id int  NOT NULL,
+    NotificationType varchar(255)  NOT NULL,
+    CONSTRAINT NotificationTypes_pk PRIMARY KEY (id)
+);
+
+-- Table: Notifications
+CREATE TABLE Notifications (
+    id int  NOT NULL,
+    isRead smallint  NOT NULL,
+    notificationDate date  NOT NULL,
+    Users_id int  NOT NULL,
+    NotificationTypes_id int  NOT NULL,
+    CONSTRAINT Notifications_pk PRIMARY KEY (id)
+);
+
+-- Table: PostComments
+CREATE TABLE PostComments (
+    commentDate date  NOT NULL,
+    commentText nvarchar(max)  NOT NULL,
+    Posts_id int  NOT NULL,
+    Users_id int  NOT NULL,
+    CONSTRAINT PostComments_pk PRIMARY KEY (Posts_id, Users_id)
+);
+
+-- Table: PostLikes
+CREATE TABLE PostLikes (
+    Users_id int  NOT NULL,
+    Posts_id int  NOT NULL,
+    CONSTRAINT PostLikes_pk PRIMARY KEY (Users_id, Posts_id)
+);
+
+-- Table: Posts
+CREATE TABLE Posts (
+    id int  NOT NULL,
+    postDate date  NOT NULL,
+    Content nvarchar(max)  NOT NULL,
+    Users_id int  NOT NULL,
+    CONSTRAINT Posts_pk PRIMARY KEY (id)
+);
+
+-- Table: Statuses
+CREATE TABLE Statuses (
+    id int  NOT NULL,
+    StatusName varchar(255)  NOT NULL,
+    CONSTRAINT Statuses_pk PRIMARY KEY (id)
+);
+
+-- Table: Users
+CREATE TABLE Users (
+    id int  NOT NULL,
+    firstName varchar(255)  NOT NULL,
+    lastName varchar(255)  NOT NULL,
+    username varchar(255)  NOT NULL,
+    email varchar(255)  NOT NULL,
+    password varchar(255)  NOT NULL,
+    dateOfBirth date  NOT NULL,
+    registrationDate date  NOT NULL,
+    profilePictureUrl varchar(255)  NOT NULL,
+    CONSTRAINT Users_pk PRIMARY KEY (id)
+);
+
+-- foreign keys
+-- Reference: Friendships_Statuses (table: Friendships)
+ALTER TABLE Friendships ADD CONSTRAINT Friendships_Statuses
+    FOREIGN KEY (Statuses_id)
+    REFERENCES Statuses (id);
+
+-- Reference: Friendships_Users1 (table: Friendships)
+ALTER TABLE Friendships ADD CONSTRAINT Friendships_Users1
+    FOREIGN KEY (Users_id1)
+    REFERENCES Users (id);
+
+-- Reference: Friendships_Users2 (table: Friendships)
+ALTER TABLE Friendships ADD CONSTRAINT Friendships_Users2
+    FOREIGN KEY (Users_id2)
+    REFERENCES Users (id);
+
+-- Reference: GroupMembers_Groups (table: GroupMembers)
+ALTER TABLE GroupMembers ADD CONSTRAINT GroupMembers_Groups
+    FOREIGN KEY (Groups_id)
+    REFERENCES Groups (id);
+
+-- Reference: GroupMembers_Users (table: GroupMembers)
+ALTER TABLE GroupMembers ADD CONSTRAINT GroupMembers_Users
+    FOREIGN KEY (Users_id)
+    REFERENCES Users (id);
+
+-- Reference: Groups_Users (table: Groups)
+ALTER TABLE Groups ADD CONSTRAINT Groups_Users
+    FOREIGN KEY (Users_id)
+    REFERENCES Users (id);
+
+-- Reference: Messages_Groups (table: Messages)
+ALTER TABLE Messages ADD CONSTRAINT Messages_Groups
+    FOREIGN KEY (Groups_id)
+    REFERENCES Groups (id);
+
+-- Reference: Messages_Users (table: Messages)
+ALTER TABLE Messages ADD CONSTRAINT Messages_Users
+    FOREIGN KEY (ReceiverID)
+    REFERENCES Users (id);
+
+-- Reference: Messages_Users1 (table: Messages)
+ALTER TABLE Messages ADD CONSTRAINT Messages_Users1
+    FOREIGN KEY (SenderID)
+    REFERENCES Users (id);
+
+-- Reference: Notifications_Types (table: Notifications)
+ALTER TABLE Notifications ADD CONSTRAINT Notifications_Types
+    FOREIGN KEY (NotificationTypes_id)
+    REFERENCES NotificationTypes (id);
+
+-- Reference: Notifications_Users (table: Notifications)
+ALTER TABLE Notifications ADD CONSTRAINT Notifications_Users
+    FOREIGN KEY (Users_id)
+    REFERENCES Users (id);
+
+-- Reference: PostComments_Posts (table: PostComments)
+ALTER TABLE PostComments ADD CONSTRAINT PostComments_Posts
+    FOREIGN KEY (Posts_id)
+    REFERENCES Posts (id);
+
+-- Reference: PostComments_Users (table: PostComments)
+ALTER TABLE PostComments ADD CONSTRAINT PostComments_Users
+    FOREIGN KEY (Users_id)
+    REFERENCES Users (id);
+
+-- Reference: PostLikes_Posts (table: PostLikes)
+ALTER TABLE PostLikes ADD CONSTRAINT PostLikes_Posts
+    FOREIGN KEY (Posts_id)
+    REFERENCES Posts (id);
+
+-- Reference: PostLikes_Users (table: PostLikes)
+ALTER TABLE PostLikes ADD CONSTRAINT PostLikes_Users
+    FOREIGN KEY (Users_id)
+    REFERENCES Users (id);
+
+-- Reference: Posts_Users (table: Posts)
+ALTER TABLE Posts ADD CONSTRAINT Posts_Users
+    FOREIGN KEY (Users_id)
+    REFERENCES Users (id);
+
+-- sequences
+-- Sequence: Groups_seq
+CREATE SEQUENCE Groups_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- Sequence: Messages_seq
+CREATE SEQUENCE Messages_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- Sequence: NotificationTypes_seq
+CREATE SEQUENCE NotificationTypes_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- Sequence: Notifications_seq
+CREATE SEQUENCE Notifications_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- Sequence: Posts_seq
+CREATE SEQUENCE Posts_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- Sequence: Statuses_seq
+CREATE SEQUENCE Statuses_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- Sequence: Users_seq
+CREATE SEQUENCE Users_seq
+      INCREMENT BY 1
+      MINVALUE 1
+      MAXVALUE 9223372036854775807
+      START WITH 1
+      NO CACHE
+      NO CYCLE;
+
+-- End of file.
+
+-- Statuses
+INSERT INTO Statuses (id, StatusName) VALUES (1, 'Pending');
+INSERT INTO Statuses (id, StatusName) VALUES (2, 'Accepted');
+INSERT INTO Statuses (id, StatusName) VALUES (3, 'Declined');
+
+-- Users
+INSERT INTO Users (id, firstName, lastName, username, email, password, dateOfBirth, registrationDate, profilePictureUrl) VALUES (1, 'John', 'Doe', 'john_doe', 'john.doe@email.com', 'password123', '1990-01-15', '2024-01-12', 'profile_pic1.jpg');
+INSERT INTO Users (id, firstName, lastName, username, email, password, dateOfBirth, registrationDate, profilePictureUrl) VALUES (2, 'Jane', 'Smith', 'jane_smith', 'jane.smith@email.com', 'securepass', '1988-05-22', '2024-01-12', 'profile_pic2.jpg');
+
+-- Posts
+INSERT INTO Posts (id, postDate, Content, Users_id) VALUES (1, '2024-01-12', 'Excited about my new project!', 1);
+INSERT INTO Posts (id, postDate, Content, Users_id) VALUES (2, '2024-01-11', 'Beautiful sunset captured today.', 2);
+
+-- PostLikes
+INSERT INTO PostLikes (Users_id, Posts_id) VALUES (1, 2); -- John likes Jane's sunset post
+INSERT INTO PostLikes (Users_id, Posts_id) VALUES (2, 1); -- Jane likes John's project post
+
+-- PostComments
+INSERT INTO PostComments (commentDate, commentText, Posts_id, Users_id) VALUES ('2024-01-12', 'Great project, John!', 1, 2);
+INSERT INTO PostComments (commentDate, commentText, Posts_id, Users_id) VALUES ('2024-01-11', 'Love the photo, Jane!', 2, 1);
+
+-- Groups
+INSERT INTO Groups (id, GroupName, CreationDate, Description, Users_id) VALUES (1, 'Programming Enthusiasts', '2024-01-12', 'A group for discussing programming topics', 1);
+INSERT INTO Groups (id, GroupName, CreationDate, Description, Users_id) VALUES (2, 'Photography Lovers', '2024-01-12', 'Share your favorite photos and photography tips', 2);
+
+-- GroupMembers
+INSERT INTO GroupMembers (Groups_id, Users_id, JoinDate) VALUES (1, 1, '2024-01-12'); -- John joins the programming group
+INSERT INTO GroupMembers (Groups_id, Users_id, JoinDate) VALUES (2, 2, '2024-01-12'); -- Jane joins the photography group
+
+-- Messages
+INSERT INTO Messages (id, Text, IsRead, Timestamp, Groups_id, SenderID, ReceiverID) VALUES (1, 'Hi John! What are you working on?', 0, '2024-01-12 10:00:00', NULL, 2, 1);
+INSERT INTO Messages (id, Text, IsRead, Timestamp, Groups_id, SenderID, ReceiverID) VALUES (2, 'Hey Jane! I just finished a coding project.', 0, '2024-01-12 10:15:00', NULL, 1, 2);
+
+-- NotificationTypes
+INSERT INTO NotificationTypes (id, NotificationType) VALUES (1, 'Friend Request');
+INSERT INTO NotificationTypes (id, NotificationType) VALUES (2, 'New Post');
+INSERT INTO NotificationTypes (id, NotificationType) VALUES (3, 'Message');
+
+-- Notifications
+INSERT INTO Notifications (id, isRead, notificationDate, Users_id, NotificationTypes_id) VALUES (1, 0, '2024-01-12', 1, 1); -- John receives a friend request
+INSERT INTO Notifications (id, isRead, notificationDate, Users_id, NotificationTypes_id) VALUES (2, 0, '2024-01-12', 2, 2); -- Jane receives a notification about a new post
+
+-- Friendships
+INSERT INTO Friendships (Statuses_id, Users_id1, Users_id2) VALUES (2, 1, 2); -- John and Jane are friends (Status: 2 - Accepted)
+INSERT INTO Friendships (Statuses_id, Users_id1, Users_id2) VALUES (2, 2, 1); -- Jane and John are friends (Status: 2 - Accepted);
